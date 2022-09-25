@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Template that creates a EventBridge event rule and a Lambda function that will be invoked when an event occurs.
+
+Globals:
+  Function:
+    CodeUri: ''
+    Environment:
+      Variables:
+        ASPNETCORE_ENVIRONMENT: DEV
+    EphemeralStorage:
+      Size: 512
+    MemorySize: 256
+    Runtime: dotnet6
+    Timeout: 30
+
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: aws-eventbridge-dotnet-dev-function
+      Description: aws-eventbridge-dotnet sample function
+      Handler: AWSEventbridgeDotnet::AWSEventbridgeDotnet.Function::FunctionHandler
+      Architectures:
+        - x86_64
+      Role: null
+      Policies:
+        - AWSLambda_FullAccess
+      Events:
+        Schedule:
+          Type: Schedule
+          Properties:
+            Name: aws-eventbridge-dotnet-dev-events-rule
+            Description: aws-eventbridge-dotnet sample events rule
+            Schedule: rate(2 minutes)
+            Enabled: true
